@@ -21,6 +21,7 @@ env::remove_var("OPTIONAL_DATA");
 
 // ... Struct can now be loaded from current environment.
 // Any missing non-`Option` field results in a panic.
+// Field names are converted to SCREAMING_SNAKE_CASE, i.e. `secret_key` will load the `SECRET_KEY` env var.
 let env = <Env as LoadEnv>::load_env();
 assert_eq!(env, Env {
     secret_key: String::from("hunter2"),
@@ -46,6 +47,12 @@ Usually, I have to define a list of mandatory variables, and then I have to conv
 I thought that given how powerful Rust's macros are, it would be a good fit for a first proc macro!
 
 Combined with [`dotenv`](https://github.com/dotenv-rs/dotenv), this makes for relatively painless environment variables management!
+
+# Future features
+
+- `Result`-based API (no panic)
+- Per-field options (specify a name without defaulting to SCREAMING_SNAKE_CASE)
+- Feature: cache env struct through [`lazy_static`](https://docs.rs/lazy_static/latest/lazy_static/) or similar
 */
 
 // TODO: Fix try_load_env
