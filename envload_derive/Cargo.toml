@@ -2,6 +2,8 @@
 name = "envload_derive"
 version = "0.1.0"
 edition = "2021"
+description = "Derive macro for envload"
+license = "MIT"
 
 [lib]
 proc-macro = true
