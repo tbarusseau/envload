@@ -1,9 +1,10 @@
 [package]
 name = "envload_derive"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Derive macro for envload"
 license = "MIT"
+documentation = "https://docs.rs/envload_derive"
 
 [lib]
 proc-macro = true
