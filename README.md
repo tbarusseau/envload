@@ -49,5 +49,8 @@ Combined with [`dotenv`](https://github.com/dotenv-rs/dotenv), this makes for re
 ## Future features
 
 - `Result`-based API (no panic)
-- Per-field options (specify a name without defaulting to SCREAMING_SNAKE_CASE)
-- Feature: cache env struct through [`lazy_static`](https://docs.rs/lazy_static/latest/lazy_static/) or similar
+- Specify a name for each field (without defaulting to SCREAMING_SNAKE_CASE)
+- Default value for optional fields
+- Optional feature: cache env struct through [`lazy_static`](https://docs.rs/lazy_static/latest/lazy_static/) or similar
+
+License: MIT
