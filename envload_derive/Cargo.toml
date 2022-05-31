@@ -1,0 +1,12 @@
+[package]
+name = "envload_derive"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+convert_case = "0.5.0"
+quote = "1.0.18"
+syn = { version = "1.0.95", features = ["full", "extra-traits"] }
