@@ -8,6 +8,7 @@ pub fn derive_envload(input: proc_macro::TokenStream) -> proc_macro::TokenStream
     let input = parse_macro_input!(input as DeriveInput);
 
     let name = input.ident;
+
     let fields: Vec<syn::Field> = match input.data {
         Data::Struct(ref data) => match data.fields {
             Fields::Named(ref fields) => fields.named.iter().map(|f| f.clone()).collect(),
@@ -17,38 +18,30 @@ pub fn derive_envload(input: proc_macro::TokenStream) -> proc_macro::TokenStream
         Data::Enum(_) => unimplemented!(),
         Data::Union(_) => unimplemented!(),
     };
-
-    let mut mandatory_fields = vec![];
-    // let mut optional_fields = vec![];
-
-    for f in fields {
-        // TODO: Check whether the type is mandatory or optional!
-
-        mandatory_fields.push(f);
-    }
-
-    let mandatory_tt = gen_mandatory_tt(&mandatory_fields);
-    // let optional_tt = gen_optional_tt(&optional_fields);
-    let return_struct = gen_return_struct(&name, &mandatory_fields /*, optional_fields */);
+    let decls = gen_decls(&fields);
+    let return_struct = gen_return_struct(&name, &fields);
 
     let expanded = quote! {
+        use envload::maybe_option::__private::{MaybeOption, GenerateFallback};
+
         impl envload::Envload for #name {
             fn load() -> #name {
-                #mandatory_tt
+                #decls
 
                 #return_struct
             }
-
-            // fn try_load() -> Result<#name, envload::EnvloadError> {
-            //     unimplemented!()
-            // }
         }
     };
 
     proc_macro::TokenStream::from(expanded)
 }
 
-fn gen_mandatory_tt(fields: &[Field]) -> TokenStream {
+// Generate the field declarations:
+// ```rust
+//     let secret_key: String = /* ... */;
+//     let optional_data: Option<_> = /* ... */;
+// ```
+fn gen_decls(fields: &[Field]) -> TokenStream {
     let decls = fields.iter().map(|f| {
         let name = f.ident.clone();
         let key = f
@@ -61,10 +54,7 @@ fn gen_mandatory_tt(fields: &[Field]) -> TokenStream {
         let ty = f.ty.clone();
 
         quote_spanned! {f.span()=>
-            let #name: #ty = std::env::var(#key)
-                .unwrap_or_else(|_| panic!("Environment variable not found"))
-                .parse()
-                .unwrap_or_else(|_| panic!("Couldn't parse environment variable"));
+            let #name: #ty = <MaybeOption<#ty>>::new().generate(#key);
         }
     });
 
@@ -87,33 +77,3 @@ fn gen_return_struct(name: &Ident, mandatory_fields: &[Field]) -> TokenStream {
         };
     }
 }
-
-// fn is_optional(field: &Field) -> bool {
-//     match field.ty {
-//         _ => unimplemented!(),
-//     }
-
-//     return false;
-// }
-
-// fn f(data: &Data) -> TokenStream {
-//     match *data {
-//         Data::Struct(ref data) => match data.fields {
-//             Fields::Named(ref fields) => {
-//                 let recurse = fields.named.iter().map(|f| {
-//                     let name = &f.ident.expect("No field identifier").to_string();
-//                     let screaming_snake_case_name =
-//                         name.to_case(convert_case::Case::ScreamingSnake);
-
-//                     quote_spanned! {f.span()=>
-
-//                     }
-//                 });
-
-//                 quote! {}
-//             }
-//             Fields::Unnamed(_) | Fields::Unit => unimplemented!(),
-//         },
-//         Data::Enum(_) | Data::Union(_) => unimplemented!(),
-//     }
-// }
