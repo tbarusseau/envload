@@ -24,8 +24,8 @@ pub fn derive_envload(input: proc_macro::TokenStream) -> proc_macro::TokenStream
     let expanded = quote! {
         use envload::maybe_option::__private::{MaybeOption, GenerateFallback};
 
-        impl envload::Envload for #name {
-            fn load() -> #name {
+        impl envload::LoadEnv for #name {
+            fn load_env() -> #name {
                 #decls
 
                 #return_struct

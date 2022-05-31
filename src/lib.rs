@@ -4,7 +4,9 @@ A derive macro for automatically filling a struct based on the current environme
 # Example
 
 ```rust
-# use envload_derive::Envload
+# use envload::{Envload, LoadEnv};
+# use std::env;
+##[derive(PartialEq, Eq, Debug)]
 #[derive(Envload)]
 struct Env {
     secret_key: String,
@@ -18,13 +20,13 @@ env::set_var("INT_DATA", "128");
 env::remove_var("OPTIONAL_DATA");
 
 // ... Struct can now be access
-let env = <Env as Envload>::load();
-assert_eq!(env, Env { secret_key: "hunter2", int_data: 128, optional_data: None });
+let env = <Env as LoadEnv>::load_env();
+assert_eq!(env, Env { secret_key: String::from("hunter2"), int_data: 128, optional_data: None });
 
 // Add data for `optional_data` field...
 env::set_var("OPTIONAL_DATA", "37");
 
-let env = <Env as Envload>::load();
+let env = <Env as LoadEnv>::load_env();
 assert_eq!(env.optional_data, Some(37));
 ```
 
@@ -38,10 +40,13 @@ Usually, I have to define a list of mandatory variables, and then I have to conv
 I thought that given how powerful Rust's macros are, it would be a good fit for a first proc macro!
 */
 
+extern crate envload_derive;
+pub use envload_derive::Envload;
+
 pub mod maybe_option;
 
-/// Main trait, exposing the [`Envload::load`] method
-pub trait Envload {
+/// Main trait, exposing the [`LoadEnv::load_env`] method
+pub trait LoadEnv {
     /// Loads `Self` with whatever variables available in the current environment.
-    fn load() -> Self;
+    fn load_env() -> Self;
 }
