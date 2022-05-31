@@ -5,6 +5,7 @@ A derive macro for automatically filling a struct based on the current environme
 ## Example
 
 ```rust
+##[derive(PartialEq, Eq, Debug)]
 #[derive(Envload)]
 struct Env {
     secret_key: String,
@@ -18,13 +19,13 @@ env::set_var("INT_DATA", "128");
 env::remove_var("OPTIONAL_DATA");
 
 // ... Struct can now be access
-let env = <Env as Envload>::load();
-assert_eq!(env, Env { secret_key: "hunter2", int_data: 128, optional_data: None });
+let env = <Env as LoadEnv>::load_env();
+assert_eq!(env, Env { secret_key: String::from("hunter2"), int_data: 128, optional_data: None });
 
 // Add data for `optional_data` field...
 env::set_var("OPTIONAL_DATA", "37");
 
-let env = <Env as Envload>::load();
+let env = <Env as LoadEnv>::load_env();
 assert_eq!(env.optional_data, Some(37));
 ```
 
