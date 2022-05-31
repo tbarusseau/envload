@@ -2,10 +2,12 @@
 name = "envload"
 version = "0.1.0"
 edition = "2021"
+description = "Automatically fill structs from env variables"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 anyhow = "1.0.57"
-envload_derive = { path = "./envload_derive" }
+envload_derive = { path = "./envload_derive", version = "0.1.0" }
 thiserror = "1.0.31"
