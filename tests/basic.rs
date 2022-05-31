@@ -12,14 +12,17 @@ mod tests {
 
     #[test]
     fn load_success() {
+        // Make sure our environment is properly setup
         std::env::set_var("SECRET_KEY", "hunter2");
         std::env::set_var("INT_DATA", "128");
+        std::env::remove_var("OPTIONAL_DATA");
 
         let env = <Env as Envload>::load();
         assert_eq!(env.secret_key, "hunter2");
         assert_eq!(env.int_data, 128);
         assert_eq!(env.optional_data, None);
 
+        // Add the optional data to our current env
         std::env::set_var("OPTIONAL_DATA", "37");
 
         let env = <Env as Envload>::load();

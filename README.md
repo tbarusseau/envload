@@ -1,10 +1,10 @@
-/*!
+# envload
+
 A derive macro for automatically filling a struct based on the current environment.
 
-# Example
+## Example
 
 ```rust
-# use envload_derive::Envload
 #[derive(Envload)]
 struct Env {
     secret_key: String,
@@ -28,7 +28,7 @@ let env = <Env as Envload>::load();
 assert_eq!(env.optional_data, Some(37));
 ```
 
-# Motivation
+## Motivation
 
 In almost every codebase where I rely on environment variable, I end up writing a `Env` struct which fill its fields
 based on what's currently in the environment.
@@ -36,12 +36,3 @@ based on what's currently in the environment.
 Usually, I have to define a list of mandatory variables, and then I have to convert the data myself.
 
 I thought that given how powerful Rust's macros are, it would be a good fit for a first proc macro!
-*/
-
-pub mod maybe_option;
-
-/// Main trait, exposing the [`Envload::load`] method
-pub trait Envload {
-    /// Loads `Self` with whatever variables available in the current environment.
-    fn load() -> Self;
-}

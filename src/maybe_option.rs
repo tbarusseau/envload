@@ -1,3 +1,7 @@
+//! Inherent specialization struct
+
+// Thanks a lot to Sabrina Jewson for the code: https://sabrinajewson.org/
+
 #[doc(hidden)]
 pub mod __private {
     use std::{marker::PhantomData, str::FromStr};

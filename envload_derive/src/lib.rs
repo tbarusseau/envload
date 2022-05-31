@@ -36,11 +36,11 @@ pub fn derive_envload(input: proc_macro::TokenStream) -> proc_macro::TokenStream
     proc_macro::TokenStream::from(expanded)
 }
 
-// Generate the field declarations:
-// ```rust
-//     let secret_key: String = /* ... */;
-//     let optional_data: Option<_> = /* ... */;
-// ```
+/// Generate the field declarations:
+/// ```rust
+///     let secret_key: String = /* ... */;
+///     let optional_data: Option<T> = /* ... */;
+/// ```
 fn gen_decls(fields: &[Field]) -> TokenStream {
     let decls = fields.iter().map(|f| {
         let name = f.ident.clone();
@@ -63,8 +63,15 @@ fn gen_decls(fields: &[Field]) -> TokenStream {
     }
 }
 
-fn gen_return_struct(name: &Ident, mandatory_fields: &[Field]) -> TokenStream {
-    let field_names = mandatory_fields.iter().map(|f| {
+/// Generate the return struct based on input fields:
+/// ```rust
+/// return Env {
+///     secret_key,
+///     optional_data,
+/// };
+/// ```
+fn gen_return_struct(name: &Ident, fields: &[Field]) -> TokenStream {
+    let field_names = fields.iter().map(|f| {
         let name = f.ident.clone();
         quote_spanned! {f.span()=>
             #name,
