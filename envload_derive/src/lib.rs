@@ -19,10 +19,11 @@ pub fn derive_envload(input: proc_macro::TokenStream) -> proc_macro::TokenStream
         Data::Union(_) => unimplemented!(),
     };
     let decls = gen_decls(&fields);
+    // let result_decls = gen_result_decls(&fields);
     let return_struct = gen_return_struct(&name, &fields);
 
     let expanded = quote! {
-        use envload::maybe_option::__private::{MaybeOption, GenerateFallback};
+        use envload::{maybe_option::__private::{MaybeOption, GenerateFallback}, errors::EnvloadError};
 
         impl envload::LoadEnv for #name {
             fn load_env() -> #name {
@@ -30,6 +31,12 @@ pub fn derive_envload(input: proc_macro::TokenStream) -> proc_macro::TokenStream
 
                 #return_struct
             }
+
+            // fn try_load_env() -> Result<#name, EnvloadError> {
+            //     #result_decls
+
+            //     #return_struct
+            // }
         }
     };
 
@@ -84,3 +91,30 @@ fn gen_return_struct(name: &Ident, fields: &[Field]) -> TokenStream {
         };
     }
 }
+
+// /// Generate the field declarations as `Result`s for error handling:
+// /// ```rust
+// ///     let secret_key: Result<String> = /* ... */;
+// ///     let optional_data: Result<Option<T>> = /* ... */;
+// /// ```
+// fn gen_result_decls(fields: &[Field]) -> TokenStream {
+//     let decls = fields.iter().map(|f| {
+//         let name = f.ident.clone();
+//         let key = f
+//             .ident
+//             .clone()
+//             .expect("No field name")
+//             .clone()
+//             .to_string()
+//             .to_case(convert_case::Case::ScreamingSnake);
+//         let ty = f.ty.clone();
+
+//         quote_spanned! {f.span()=>
+//             let #name: #ty = <MaybeOption<Result<#ty, EnvloadError>>>::new().generate(#key)?;
+//         }
+//     });
+
+//     quote! {
+//         #(#decls)*
+//     }
+// }

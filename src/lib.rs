@@ -48,13 +48,23 @@ I thought that given how powerful Rust's macros are, it would be a good fit for 
 Combined with [`dotenv`](https://github.com/dotenv-rs/dotenv), this makes for relatively painless environment variables management!
 */
 
+// TODO: Fix try_load_env
+
 extern crate envload_derive;
 pub use envload_derive::Envload;
+// use errors::EnvloadError;
 
+pub mod errors;
 pub mod maybe_option;
 
+// /// Main trait, exposing the [`LoadEnv::load_env`] and [`LoadEnv::try_load_env`] methods
 /// Main trait, exposing the [`LoadEnv::load_env`] method
 pub trait LoadEnv {
-    /// Loads `Self` with whatever variables available in the current environment.
+    /// Loads `Self` with whatever variables are available in the current environment.
     fn load_env() -> Self;
+
+    // /// Tries to load `Self` with whatever variables are available in the current environment.
+    // fn try_load_env() -> Result<Self, EnvloadError>
+    // where
+    //     Self: Sized;
 }

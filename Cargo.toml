@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.57"
 envload_derive = { path = "./envload_derive" }
+thiserror = "1.0.31"
